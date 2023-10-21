@@ -2,13 +2,13 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/ShoutVault.sol";
+import "../src/Shouter.sol";
 import "./contracts/TestERC20.sol";
 import "./contracts/TestERC4626.sol";
 import "./contracts/TestYieldVault.sol";
 
-contract ShoutVaultTest is Test {
-    ShoutVault public shoutVault;
+contract ShouterTest is Test {
+    Shouter public shoutVault;
 
     TestERC20 public testERC20;
     TestYieldVault public testYieldVault;
@@ -36,7 +36,7 @@ contract ShoutVaultTest is Test {
     );
 
     function setUp() public {
-        shoutVault = new ShoutVault();
+        shoutVault = new Shouter();
 
         testERC20 = new TestERC20();
         testYieldVault = new TestYieldVault(address(testERC20));

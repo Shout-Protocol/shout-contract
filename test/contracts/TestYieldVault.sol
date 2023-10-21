@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "../../src/interfaces/IShoutYieldVault.sol";
+import "../../src/interfaces/IYieldVault.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
-contract TestYieldVault is IShoutYieldVault {
+contract TestYieldVault is IYieldVault {
 
     IERC20 private _token;
     uint256 private _deposited;

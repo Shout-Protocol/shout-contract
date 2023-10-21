@@ -3,10 +3,10 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./interfaces/IShoutVault.sol";
-import "./interfaces/IShoutYieldVault.sol";
+import "./interfaces/IShouter.sol";
+import "./interfaces/IYieldVault.sol";
 
-contract ShoutVault is IShoutVault, Ownable {
+contract Shouter is IShouter, Ownable {
     uint public postCount;
     // postId => owner
     mapping(uint => address) public postOwner;
@@ -14,19 +14,19 @@ contract ShoutVault is IShoutVault, Ownable {
     mapping(uint => mapping(uint => uint)) public boostScore;
 
     uint public vaultCount;
-    mapping(uint => IShoutYieldVault) public yieldVaults;
+    mapping(uint => IYieldVault) public yieldVaults;
     mapping(uint => bool) public yieldVaultPaused;
 
     // === Modifiers ===
     modifier onlyPostOwner(uint postId) {
-        require(msg.sender == postOwner[postId], "ShoutVault: Only post owner");
+        require(msg.sender == postOwner[postId], "Shouter: Only post owner");
         _;
     }
 
     modifier isNotPaused(uint yieldVaultId) {
         require(
             !yieldVaultPaused[yieldVaultId],
-            "ShoutVault: Yield vault is paused"
+            "Shouter: Yield vault is paused"
         );
         _;
     }
@@ -108,7 +108,7 @@ contract ShoutVault is IShoutVault, Ownable {
     function getClaimableYield(
         uint _yieldVaultId
     ) external view override onlyOwner returns (uint256 amount) {
-        IShoutYieldVault yieldVault = yieldVaults[_yieldVaultId];
+        IYieldVault yieldVault = yieldVaults[_yieldVaultId];
         return yieldVault.getYieldAmount();
     }
 
@@ -134,7 +134,7 @@ contract ShoutVault is IShoutVault, Ownable {
         uint newBoost = boostScore[_postId][_yieldVaultId] + _amount;
         boostScore[_postId][_yieldVaultId] = newBoost;
 
-        IShoutYieldVault yieldVault = yieldVaults[_yieldVaultId];
+        IYieldVault yieldVault = yieldVaults[_yieldVaultId];
         IERC20 token = IERC20(yieldVault.token());
         token.transferFrom(msg.sender, address(this), _amount);
         token.approve(address(yieldVault), _amount);
@@ -153,7 +153,7 @@ contract ShoutVault is IShoutVault, Ownable {
         uint newBoost = boostScore[_postId][_yieldVaultId] - _amount;
         boostScore[_postId][_yieldVaultId] = newBoost;
 
-        IShoutYieldVault yieldVault = yieldVaults[_yieldVaultId];
+        IYieldVault yieldVault = yieldVaults[_yieldVaultId];
         yieldVault.withdraw(_amount);
         IERC20 token = IERC20(yieldVault.token());
         token.transfer(msg.sender, _amount);
@@ -166,7 +166,7 @@ contract ShoutVault is IShoutVault, Ownable {
         address _yieldVault
     ) private returns (uint256 yieldVaultId) {
         vaultCount++;
-        yieldVaults[vaultCount] = IShoutYieldVault(_yieldVault);
+        yieldVaults[vaultCount] = IYieldVault(_yieldVault);
         emit YieldVaultAdded(vaultCount, _yieldVault);
         return vaultCount;
     }
@@ -188,10 +188,10 @@ contract ShoutVault is IShoutVault, Ownable {
     }
 
     function _claimYield(uint _yieldVaultId, uint _amount) private {
-        IShoutYieldVault yieldVault = yieldVaults[_yieldVaultId];
+        IYieldVault yieldVault = yieldVaults[_yieldVaultId];
         yieldVault.withdrawYield(_amount);
         IERC20 token = IERC20(yieldVault.token());
         token.transfer(msg.sender, _amount);
-        emit YieldClaimed(_yieldVaultId, address(yieldVault), _amount);
+        emit YieldClaimed(_yieldVaultId, msg.sender, _amount);
     }
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.5.0;
 
-interface IShoutVault {
+interface IShouter {
     event PostCreated(
         uint indexed postId,
         address indexed owner,
@@ -20,7 +20,7 @@ interface IShoutVault {
     event YieldVaultPaused(uint indexed yieldVaultId, bool paused);
     event YieldClaimed(
         uint indexed yieldVaultId,
-        address indexed yieldVault,
+        address indexed beneficiary,
         uint amount
     );
 
