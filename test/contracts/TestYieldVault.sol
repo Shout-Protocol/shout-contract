@@ -30,6 +30,7 @@ contract TestYieldVault is IShoutYieldVault {
     function withdrawYield(uint amount) external override {
         require(amount <= _yieldAmount, "ERC4626YieldVault: insufficient yield");
 
+        _yieldAmount -= amount;
         _token.transfer(msg.sender, amount);
         emit YieldWithdrawn(msg.sender, amount);
     }

@@ -86,6 +86,44 @@ contract ShoutVaultTest is Test {
         shoutVault.withdrawBoost(postId, yieldVaultId, amount);
     }
 
-    // Test yield collecting
+    function testYieldCollecting() public {
+        uint256 postId = shoutVault.createPost("ipfsHash");
+        uint256 yieldVaultId = 1;
+
+        testERC20.mint(address(this), 100);
+        testERC20.approve(address(shoutVault), 100);
+        shoutVault.depositBoost(postId, yieldVaultId, 100);
+
+        testYieldVault.increseYieldAmount(10);
+
+        uint256[] memory vaultIds = new uint256[](1);
+        uint256[] memory amounts = new uint256[](1);
+
+        vaultIds[0] = yieldVaultId;
+        amounts[0] = 10;
+        shoutVault.claimYields(vaultIds, amounts);
+
+        assertEq(shoutVault.getClaimableYield(yieldVaultId), 0);
+        assertEq(testERC20.balanceOf(address(this)), 10);
+    }
+
+    function testFail_YieldCollecting() public {
+        uint256 postId = shoutVault.createPost("ipfsHash");
+        uint256 yieldVaultId = 1;
+
+        testERC20.mint(address(this), 100);
+        testERC20.approve(address(shoutVault), 100);
+        shoutVault.depositBoost(postId, yieldVaultId, 100);
+
+        testYieldVault.increseYieldAmount(10);
+
+        uint256[] memory vaultIds = new uint256[](1);
+        uint256[] memory amounts = new uint256[](1);
+
+        vaultIds[0] = yieldVaultId;
+        amounts[0] = 10;
+        shoutVault.claimYields(vaultIds, amounts);
+        shoutVault.claimYields(vaultIds, amounts);
+    }
 
 }
