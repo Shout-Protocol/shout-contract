@@ -11,11 +11,12 @@ contract AddYieldVault is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        Shouter shouter = Shouter(0x285CaB75045B02553e6d2f1b1e2B077f5F8d083b);
+        Shouter shouter = Shouter(0x60edA798a0503d81CCB2ACA7b2A098e1892e759d);
 
-        address yieldVault = 0xE9A9510bbF05a11a73Dd8DF611fD410D0645a0BB;
+        ERC4626YieldVault yieldVault = ERC4626YieldVault(0x919a82b146fdE7415285bFf66826Aee8b608a963);
 
-        shouter.addYieldVault(yieldVault);
+        shouter.addYieldVault(address(yieldVault));
+        yieldVault.transferOwnership(address(shouter));
 
         vm.stopBroadcast();
     }

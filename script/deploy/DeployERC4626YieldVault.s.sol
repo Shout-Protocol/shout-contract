@@ -10,7 +10,7 @@ contract DeployERC4626YieldVault is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        address yieldToken = 0x4056161BC91e3F23551b3689de97053fB1B9b02f;
+        address yieldToken = 0x2A26e41F3F332D91BDF405902550116cBc84fbA0;
         new ERC4626YieldVault(yieldToken);
 
         vm.stopBroadcast();
