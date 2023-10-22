@@ -21,6 +21,7 @@ contract DeployAll is Script {
         ERC4626YieldVault yieldVault = new ERC4626YieldVault(address(erc4626));
 
         shouter.addYieldVault(address(yieldVault));
+        yieldVault.transferOwnership(address(shouter));
         vm.stopBroadcast();
     }
 }
